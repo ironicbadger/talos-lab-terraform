@@ -1,0 +1,9 @@
+[tools]
+jq = "latest"
+just = "latest"
+kubectl = "latest"
+opentofu = "latest"
+sops = "latest"
+talhelper = "latest"
+talosctl = "latest"
+yq = "latest"
