@@ -1,5 +1,5 @@
 clusterName: talos-m720q
-talosVersion: v1.11.5
+talosVersion: v1.12.3
 kubernetesVersion: v1.32.0
 endpoint: https://10.42.0.101:6443  # First control plane (Tailscale API proxy provides HA)
 
