@@ -9,7 +9,9 @@ spec:
   chart:
     spec:
       chart: headlamp
-      version: ">=0.20.0 <1.0.0"
+      # 0.40.1 repeatedly times out on m720q during Helm upgrade; pin to the
+      # last known-good release until the upgrade path is verified.
+      version: "0.39.0"
       sourceRef:
         kind: HelmRepository
         name: headlamp
