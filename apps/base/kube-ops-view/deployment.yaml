@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-ops-view
+  namespace: kube-ops-view
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-ops-view
+  template:
+    metadata:
+      labels:
+        app: kube-ops-view
+    spec:
+      serviceAccountName: kube-ops-view
+      containers:
+        - name: kube-ops-view
+          image: hjacobs/kube-ops-view:23.5.0
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+            limits:
+              cpu: 200m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
