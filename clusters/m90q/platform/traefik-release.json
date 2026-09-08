@@ -103,11 +103,6 @@
       "podDisruptionBudget": {
         "enabled": true,
         "minAvailable": 1
-      },
-      "logs": {
-        "access": {
-          "enabled": true
-        }
       }
     }
   }
