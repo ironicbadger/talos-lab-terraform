@@ -1,0 +1,78 @@
+{
+  "apiVersion": "helm.toolkit.fluxcd.io/v2",
+  "kind": "HelmRelease",
+  "metadata": {
+    "name": "headlamp",
+    "namespace": "headlamp"
+  },
+  "spec": {
+    "releaseName": "headlamp",
+    "interval": "30m",
+    "timeout": "5m",
+    "chart": {
+      "spec": {
+        "chart": "headlamp",
+        "version": "0.45.0",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "headlamp",
+          "namespace": "flux-system"
+        }
+      }
+    },
+    "install": {
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "upgrade": {
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "values": {
+      "fullnameOverride": "headlamp",
+      "clusterRoleBinding": {
+        "create": false
+      },
+      "config": {
+        "inClusterContextName": "m90q",
+        "oidc": {
+          "secret": {
+            "create": false
+          },
+          "externalSecret": {
+            "enabled": true,
+            "name": "headlamp-oidc",
+            "hasScopes": true
+          },
+          "callbackURL": "https://m90q-headlamp.ktz.ts.net/oidc-callback",
+          "usePKCE": true
+        }
+      },
+      "resources": {
+        "requests": {
+          "cpu": "50m",
+          "memory": "128Mi"
+        },
+        "limits": {
+          "memory": "512Mi"
+        }
+      },
+      "securityContext": {
+        "runAsNonRoot": true,
+        "runAsUser": 100,
+        "runAsGroup": 101,
+        "allowPrivilegeEscalation": false,
+        "capabilities": {
+          "drop": [
+            "ALL"
+          ]
+        },
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      }
+    }
+  }
+}

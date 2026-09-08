@@ -1,0 +1,7 @@
+{
+  "oidc-issuer-url": "https://idp.ktz.ts.net",
+  "oidc-client-id": "30e46033f3e3f9b75fc83d850d179129",
+  "oidc-username-claim": "email",
+  "oidc-groups-claim": "tags",
+  "oidc-groups-prefix": "oidc:"
+}

@@ -1,0 +1,26 @@
+{
+  "apiVersion": "networking.k8s.io/v1",
+  "kind": "Ingress",
+  "metadata": {
+    "name": "headlamp",
+    "namespace": "headlamp"
+  },
+  "spec": {
+    "ingressClassName": "tailscale",
+    "defaultBackend": {
+      "service": {
+        "name": "headlamp",
+        "port": {
+          "number": 80
+        }
+      }
+    },
+    "tls": [
+      {
+        "hosts": [
+          "m90q-headlamp"
+        ]
+      }
+    ]
+  }
+}

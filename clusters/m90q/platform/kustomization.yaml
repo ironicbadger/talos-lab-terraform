@@ -11,3 +11,9 @@ resources:
   - tailscale-repository.json
   - tailscale-secret.sops.yaml
   - tailscale-release.json
+  - headlamp-namespace.json
+  - headlamp-repository.json
+  - headlamp-secret.sops.yaml
+  - headlamp-release.json
+  - headlamp-ingress.json
+  - headlamp-rbac.json
