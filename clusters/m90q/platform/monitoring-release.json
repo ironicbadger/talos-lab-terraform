@@ -1,0 +1,158 @@
+{
+  "apiVersion": "helm.toolkit.fluxcd.io/v2",
+  "kind": "HelmRelease",
+  "metadata": {
+    "name": "monitoring",
+    "namespace": "monitoring"
+  },
+  "spec": {
+    "releaseName": "monitoring",
+    "interval": "30m",
+    "timeout": "10m",
+    "chart": {
+      "spec": {
+        "chart": "kube-prometheus-stack",
+        "version": "90.0.0",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "prometheus-community",
+          "namespace": "flux-system"
+        }
+      }
+    },
+    "install": {
+      "crds": "CreateReplace",
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "upgrade": {
+      "crds": "CreateReplace",
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "values": {
+      "alertmanager": {
+        "enabled": false
+      },
+      "kubeEtcd": {
+        "enabled": false
+      },
+      "kubeScheduler": {
+        "enabled": false
+      },
+      "kubeControllerManager": {
+        "enabled": false
+      },
+      "kubeProxy": {
+        "enabled": false
+      },
+      "defaultRules": {
+        "rules": {
+          "alertmanager": false,
+          "etcd": false,
+          "kubeControllerManager": false,
+          "kubeProxy": false,
+          "kubeSchedulerAlerting": false,
+          "kubeSchedulerRecording": false
+        }
+      },
+      "prometheus": {
+        "prometheusSpec": {
+          "retention": "7d",
+          "retentionSize": "8GB",
+          "scrapeInterval": "30s",
+          "evaluationInterval": "30s",
+          "resources": {
+            "requests": {
+              "cpu": "200m",
+              "memory": "512Mi"
+            },
+            "limits": {
+              "memory": "2Gi"
+            }
+          },
+          "storageSpec": {
+            "volumeClaimTemplate": {
+              "spec": {
+                "storageClassName": "ceph-rbd",
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "10Gi"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "prometheus-node-exporter": {
+        "hostRootFsMount": {
+          "enabled": false
+        },
+        "resources": {
+          "requests": {
+            "cpu": "20m",
+            "memory": "32Mi"
+          },
+          "limits": {
+            "memory": "128Mi"
+          }
+        }
+      },
+      "grafana": {
+        "admin": {
+          "existingSecret": "grafana-auth"
+        },
+        "envFromSecret": "grafana-auth",
+        "persistence": {
+          "enabled": true,
+          "storageClassName": "ceph-rbd",
+          "size": "1Gi"
+        },
+        "deploymentStrategy": {
+          "type": "Recreate"
+        },
+        "resources": {
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          },
+          "limits": {
+            "memory": "512Mi"
+          }
+        },
+        "grafana.ini": {
+          "server": {
+            "root_url": "https://m90q-grafana.ktz.ts.net"
+          },
+          "auth": {
+            "disable_login_form": true
+          },
+          "dashboards": {
+            "default_home_dashboard_path": "/tmp/dashboards/m90q-overview.json"
+          },
+          "auth.generic_oauth": {
+            "enabled": true,
+            "name": "Tailscale",
+            "allow_sign_up": true,
+            "client_id": "$__env{client_id}",
+            "client_secret": "$__env{client_secret}",
+            "scopes": "openid profile email",
+            "auth_url": "https://idp.ktz.ts.net/authorize",
+            "token_url": "https://idp.ktz.ts.net/token",
+            "api_url": "https://idp.ktz.ts.net/userinfo",
+            "use_pkce": true,
+            "login_attribute_path": "email",
+            "role_attribute_path": "email == 'alexktz@gmail.com' && 'Admin'",
+            "role_attribute_strict": true
+          }
+        }
+      }
+    }
+  }
+}

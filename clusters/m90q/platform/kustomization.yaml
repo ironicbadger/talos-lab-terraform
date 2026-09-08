@@ -17,3 +17,9 @@ resources:
   - headlamp-release.json
   - headlamp-ingress.json
   - headlamp-rbac.json
+  - monitoring-namespace.json
+  - prometheus-repository.json
+  - grafana-secret.sops.yaml
+  - monitoring-release.json
+  - grafana-ingress.json
+  - grafana-dashboard.json
