@@ -1,0 +1,58 @@
+{
+  "machine": {
+    "network": {
+      "nameservers": [
+        "10.42.0.53"
+      ],
+      "interfaces": [
+        {
+          "interface": "ens18",
+          "dhcp": false,
+          "addresses": [
+            "10.42.1.121/21"
+          ],
+          "routes": [
+            {
+              "network": "0.0.0.0/0",
+              "gateway": "10.42.0.254"
+            }
+          ],
+          "vip": {
+            "ip": "10.42.1.120"
+          }
+        }
+      ]
+    },
+    "nodeLabels": {
+      "topology.kubernetes.io/zone": "m90q-1"
+    },
+    "features": {
+      "kubePrism": {
+        "enabled": true,
+        "port": 7445
+      }
+    }
+  },
+  "cluster": {
+    "allowSchedulingOnControlPlanes": true,
+    "network": {
+      "cni": {
+        "name": "none"
+      },
+      "podSubnets": [
+        "10.244.0.0/16"
+      ],
+      "serviceSubnets": [
+        "10.96.0.0/12"
+      ]
+    },
+    "proxy": {
+      "disabled": true
+    }
+  }
+}
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: null
+hostname: talos-m90q-1

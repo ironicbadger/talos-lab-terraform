@@ -1,0 +1,73 @@
+{
+  "apiVersion": "helm.toolkit.fluxcd.io/v2",
+  "kind": "HelmRelease",
+  "metadata": {
+    "name": "cilium",
+    "namespace": "kube-system"
+  },
+  "spec": {
+    "releaseName": "cilium",
+    "interval": "30m",
+    "timeout": "5m",
+    "chart": {
+      "spec": {
+        "chart": "cilium",
+        "version": "1.20.1",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "cilium",
+          "namespace": "flux-system"
+        }
+      }
+    },
+    "install": {
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "upgrade": {
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "values": {
+      "ipam": {
+        "mode": "kubernetes"
+      },
+      "kubeProxyReplacement": true,
+      "k8sServiceHost": "127.0.0.1",
+      "k8sServicePort": 7445,
+      "operator": {
+        "replicas": 2
+      },
+      "securityContext": {
+        "capabilities": {
+          "ciliumAgent": [
+            "CHOWN",
+            "KILL",
+            "NET_ADMIN",
+            "NET_RAW",
+            "IPC_LOCK",
+            "SYS_ADMIN",
+            "SYS_RESOURCE",
+            "DAC_OVERRIDE",
+            "FOWNER",
+            "SETGID",
+            "SETUID"
+          ],
+          "cleanCiliumState": [
+            "NET_ADMIN",
+            "SYS_ADMIN",
+            "SYS_RESOURCE"
+          ]
+        }
+      },
+      "cgroup": {
+        "autoMount": {
+          "enabled": false
+        },
+        "hostRoot": "/sys/fs/cgroup"
+      }
+    }
+  }
+}

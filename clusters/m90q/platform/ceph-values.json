@@ -1,0 +1,30 @@
+{
+  "csiConfig": [
+    {
+      "clusterID": "1f4d427c-77c5-47bc-8d63-b507b05afc47",
+      "monitors": [
+        "10.42.1.91:6789",
+        "10.42.1.92:6789",
+        "10.42.1.93:6789"
+      ]
+    }
+  ],
+  "provisioner": {
+    "replicaCount": 2
+  },
+  "storageClass": {
+    "create": true,
+    "name": "ceph-rbd",
+    "annotations": {
+      "storageclass.kubernetes.io/is-default-class": "true"
+    },
+    "clusterID": "1f4d427c-77c5-47bc-8d63-b507b05afc47",
+    "pool": "k8s-m90q",
+    "imageFeatures": "layering",
+    "reclaimPolicy": "Retain",
+    "allowVolumeExpansion": true
+  },
+  "secret": {
+    "create": false
+  }
+}
