@@ -7,3 +7,7 @@ resources:
   - ceph-csi-repository.json
   - ceph-secret.sops.yaml
   - ceph-csi-rbd-release.json
+  - tailscale-namespace.json
+  - tailscale-repository.json
+  - tailscale-secret.sops.yaml
+  - tailscale-release.json
