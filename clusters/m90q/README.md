@@ -6,7 +6,7 @@ Provisioning inventory and scripts: `ironicbadger/infra`, `talos/m90q/`.
 
 Flux tracks `codex/m90q-cluster`, reconciling this directory and its `platform/`
 child. This intentionally does not include old app overlays, in-cluster Ceph,
-monitoring stacks, dashboards or application ingress. No applications deployed.
+monitoring stacks or application workloads. Headlamp is the requested cluster dashboard.
 
 Installed: Flux 2.9.4 (source, kustomize and Helm controllers), Cilium 1.20.1,
 Ceph-CSI RBD 3.17.1. HelmRelease versions are pinned. The Ceph driver consumes
@@ -46,6 +46,27 @@ The build verified access using an isolated config at
 `talos/clusterconfig/tailscale-kubeconfig`, preserving the default context.
 API authorization uses existing tailnet impersonation grants. The operator is
 one replica; the independent LAN VIP remains available during operator downtime.
+
+## Headlamp
+
+Headlamp 0.45.0: https://m90q-headlamp.ktz.ts.net (tailnet only).
+Select **Sign in** to authenticate through the existing https://idp.ktz.ts.net.
+The dedicated tsidp client is `m90q-headlamp`; its callback is
+`https://m90q-headlamp.ktz.ts.net/oidc-callback`. Credentials are SOPS-encrypted in
+`platform/headlamp-secret.sops.yaml`, mounted via an external Secret; PKCE is enabled.
+
+All three Kubernetes API servers trust the issuer and client ID in `talos/oidc.json`.
+The infra config generator includes these arguments. Apply regenerated Talos configs
+one node at a time with `--mode=no-reboot`, waiting for the new API pod and `/readyz`
+on that node before continuing. The VIP can briefly refuse connections when its
+owner's API server restarts; other API nodes and KubePrism remain available.
+
+RBAC maps `alexktz@gmail.com` to cluster-admin. Headlamp's service account has no
+cluster-admin binding; access uses the logged-in user's token. Group claims are
+prefixed `oidc:` to keep them distinct from Kubernetes built-in groups.
+
+Verified HTTPS, the full OIDC redirect/token exchange, and an authenticated request
+through Headlamp returning all three Kubernetes nodes. No persistent volume needed.
 
 ## Recovery
 
