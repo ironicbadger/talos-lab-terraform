@@ -66,6 +66,13 @@
                 "permanent": true
               }
             }
+          },
+          "proxyProtocol": {
+            "trustedIPs": [
+              "10.42.0.5/32",
+              "10.42.0.6/32",
+              "10.42.0.54/32"
+            ]
           }
         },
         "websecure": {
@@ -74,6 +81,13 @@
             "tls": {
               "enabled": true
             }
+          },
+          "proxyProtocol": {
+            "trustedIPs": [
+              "10.42.0.5/32",
+              "10.42.0.6/32",
+              "10.42.0.54/32"
+            ]
           }
         }
       },
