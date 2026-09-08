@@ -6,7 +6,7 @@ Provisioning inventory and scripts: `ironicbadger/infra`, `talos/m90q/`.
 
 Flux tracks `codex/m90q-cluster`, reconciling this directory and its `platform/`
 child. This intentionally does not include old app overlays, in-cluster Ceph,
-monitoring stacks or application workloads. Headlamp is the requested cluster dashboard.
+application workloads. Headlamp and Grafana provide cluster administration and monitoring.
 
 Installed: Flux 2.9.4 (source, kustomize and Helm controllers), Cilium 1.20.1,
 Ceph-CSI RBD 3.17.1. HelmRelease versions are pinned. The Ceph driver consumes
@@ -67,6 +67,28 @@ prefixed `oidc:` to keep them distinct from Kubernetes built-in groups.
 
 Verified HTTPS, the full OIDC redirect/token exchange, and an authenticated request
 through Headlamp returning all three Kubernetes nodes. No persistent volume needed.
+
+## Grafana and metrics
+
+Open https://m90q-grafana.ktz.ts.net and sign in with Tailscale. The home dashboard
+is **M90q / Cluster overview**, with RAM/CPU usage, scheduling requests, namespace
+usage, PVC utilisation and restarts. The bundled Kubernetes dashboards provide
+pod, namespace, kubelet and API server drilldowns. Node capacity is the Talos VM
+capacity (8 GiB each), not the full Proxmox hosts.
+
+`platform/monitoring-release.json` pins kube-prometheus-stack 90.0.0. Prometheus
+keeps up to seven days / 8 GB of metrics on a 10 GiB Ceph RBD PVC; Grafana has a
+1 GiB PVC. Both use the existing Retain storage class. The dashboard is managed
+in Git via `platform/grafana-dashboard.json`; persist edits there.
+
+Grafana uses a separate `m90q-grafana` tsidp client. Only `alexktz@gmail.com` is
+mapped to Admin; other identities are denied. OAuth and recovery admin credentials
+are SOPS-encrypted in `platform/grafana-secret.sops.yaml`.
+
+Scrapes cover nodes, kubelet/cAdvisor, kube-state-metrics and the Kubernetes API.
+The stack does not expose Talos's local-only etcd, scheduler or controller-manager
+metrics. kube-proxy is absent. Their scrapes and associated rules are disabled.
+Alertmanager is disabled; this installation does not send notifications.
 
 ## Recovery
 
