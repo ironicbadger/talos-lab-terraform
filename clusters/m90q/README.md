@@ -25,15 +25,27 @@ flux get all -A
 The LAN API VIP is `10.42.1.120`. Talos API endpoints are `.121`, `.122`, `.123`;
 use individual nodes rather than the Kubernetes VIP for Talos administration.
 
-## Pending Tailscale
+## Tailscale access
 
-The old repo has the desired Tailscale operator/API-proxy pattern, but its OAuth
-Secret cannot be decrypted with keys available on this Mac. A fresh age key does
-not recover that credential. Restore the old SOPS key or supply fresh OAuth
-credentials scoped for the operator. Add `tag:k8s-m90q` to the tailnet policy,
-owned by `tag:k8s-operator`, and retain `tag:k8s` and `tag:k8s-operator` tagging.
-Then add the operator's pinned HelmRelease and encrypted Secret to platform.
-Do not deploy a release with empty credentials or import the old cluster root.
+Tailscale operator 1.102.3 is reconciled by Flux. Its authenticated API proxy is
+`https://m90q-ts-operator.ktz.ts.net`. OAuth credentials are SOPS-encrypted in
+`platform/tailscale-secret.sops.yaml` and mounted through `operator-oauth`.
+
+This cluster intentionally uses only existing `tag:k8s-operator` and `tag:k8s`
+tags. The per-cluster tag convention is unnecessary for this installation; no
+additional tag ownership or tailnet policy changes were needed. Hostname identifies
+this operator. Future proxy devices use `tag:k8s` by default.
+
+```sh
+# Optional: configure your normal kubectl context for tailnet access.
+tailscale configure kubeconfig m90q-ts-operator.ktz.ts.net
+kubectl get nodes
+```
+
+The build verified access using an isolated config at
+`talos/clusterconfig/tailscale-kubeconfig`, preserving the default context.
+API authorization uses existing tailnet impersonation grants. The operator is
+one replica; the independent LAN VIP remains available during operator downtime.
 
 ## Recovery
 
