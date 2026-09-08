@@ -1,0 +1,114 @@
+{
+  "apiVersion": "helm.toolkit.fluxcd.io/v2",
+  "kind": "HelmRelease",
+  "metadata": {
+    "name": "traefik",
+    "namespace": "traefik"
+  },
+  "spec": {
+    "interval": "30m",
+    "timeout": "7m",
+    "chart": {
+      "spec": {
+        "chart": "traefik",
+        "version": "41.5.0",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "traefik",
+          "namespace": "flux-system"
+        }
+      }
+    },
+    "install": {
+      "crds": "CreateReplace",
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "upgrade": {
+      "crds": "CreateReplace",
+      "remediation": {
+        "retries": 3
+      }
+    },
+    "values": {
+      "deployment": {
+        "replicas": 2
+      },
+      "affinity": {
+        "podAntiAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": [
+            {
+              "labelSelector": {
+                "matchLabels": {
+                  "app.kubernetes.io/name": "traefik"
+                }
+              },
+              "topologyKey": "kubernetes.io/hostname"
+            }
+          ]
+        }
+      },
+      "service": {
+        "type": "NodePort",
+        "spec": {
+          "externalTrafficPolicy": "Local"
+        }
+      },
+      "ports": {
+        "web": {
+          "nodePort": 30080,
+          "http": {
+            "redirections": {
+              "entryPoint": {
+                "to": "websecure",
+                "scheme": "https",
+                "permanent": true
+              }
+            }
+          }
+        },
+        "websecure": {
+          "nodePort": 30443,
+          "http": {
+            "tls": {
+              "enabled": true
+            }
+          }
+        }
+      },
+      "providers": {
+        "kubernetesIngress": {
+          "ingressClass": "traefik",
+          "publishedService": {
+            "enabled": false
+          },
+          "ingressEndpoint": {
+            "ip": "10.42.0.54"
+          }
+        },
+        "kubernetesCRD": {
+          "enabled": true
+        }
+      },
+      "resources": {
+        "requests": {
+          "cpu": "100m",
+          "memory": "128Mi"
+        },
+        "limits": {
+          "memory": "512Mi"
+        }
+      },
+      "podDisruptionBudget": {
+        "enabled": true,
+        "minAvailable": 1
+      },
+      "logs": {
+        "access": {
+          "enabled": true
+        }
+      }
+    }
+  }
+}

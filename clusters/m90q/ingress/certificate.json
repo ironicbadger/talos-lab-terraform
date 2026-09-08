@@ -1,0 +1,22 @@
+{
+  "apiVersion": "cert-manager.io/v1",
+  "kind": "Certificate",
+  "metadata": {
+    "name": "m90q-wildcard",
+    "namespace": "traefik"
+  },
+  "spec": {
+    "secretName": "m90q-wildcard-tls",
+    "dnsNames": [
+      "*.m90q.ktz.me",
+      "m90q.ktz.me"
+    ],
+    "issuerRef": {
+      "name": "letsencrypt-cloudflare",
+      "kind": "ClusterIssuer"
+    },
+    "privateKey": {
+      "rotationPolicy": "Always"
+    }
+  }
+}

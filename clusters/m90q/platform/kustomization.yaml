@@ -23,3 +23,10 @@ resources:
   - monitoring-release.json
   - grafana-ingress.json
   - grafana-dashboard.json
+  - traefik-namespace.json
+  - traefik-repository.json
+  - traefik-release.json
+  - cert-manager-namespace.json
+  - cert-manager-repository.json
+  - cert-manager-release.json
+  - ingress-sync.json
