@@ -35,12 +35,11 @@
         "hostname": "m90q-ts-operator",
         "defaultTags": [
           "tag:k8s-operator",
-          "tag:k8s",
-          "tag:k8s-m90q"
+          "tag:k8s"
         ]
       },
       "proxyConfig": {
-        "defaultTags": "tag:k8s,tag:k8s-m90q"
+        "defaultTags": "tag:k8s"
       },
       "apiServerProxyConfig": {
         "mode": "true",
